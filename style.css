@@ -258,3 +258,39 @@ button.mini {
   line-height: 1.7;
   color: #d8cdec;
 }
+
+.vote-area {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.vote-button {
+  background: #3f3654;
+}
+
+.vote-button.voted {
+  background: #8f5cff;
+}
+
+.result-rank {
+  margin-bottom: 18px;
+  padding: 14px;
+  background: #15111f;
+  border: 1px solid #3a314d;
+  border-radius: 14px;
+}
+
+.result-rank.winner {
+  border-color: #ffcf7a;
+}
+
+.result-rank .rank {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ffcf7a;
+  color: #241f30;
+  font-weight: 800;
+}
