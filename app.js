@@ -268,12 +268,8 @@ copyRoomIdBtn.addEventListener("click", async () => {
 });
 
 startGameBtn.addEventListener("click", async () => {
-  const topic = topicInput.value.trim();
-
-  if (!topic) {
-    setWaitingMessage("お題を入れて");
-    return;
-  }
+  const defaultTopic = "恋愛失敗しそうな人";
+  const topic = topicInput.value.trim() || defaultTopic;
 
   try {
     await updateDoc(doc(db, "rooms", state.roomId), {
