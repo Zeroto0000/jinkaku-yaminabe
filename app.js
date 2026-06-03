@@ -63,6 +63,11 @@ const myResultArea = document.getElementById("myResultArea");
 const myResultTitle = document.getElementById("myResultTitle");
 const myResultText = document.getElementById("myResultText");
 
+const revealing = document.getElementById("revealing");
+const revealingTopicText = document.getElementById("revealingTopicText");
+const anonymousResults = document.getElementById("anonymousResults");
+const revealingMessage = document.getElementById("revealingMessage");
+
 const state = {
   roomId: "",
   playerId: "",
@@ -70,10 +75,15 @@ const state = {
   isHost: false,
   unsubscribePlayers: null,
   unsubscribeRoom: null,
+  unsubscribeSubmissions: null,
 
   selectedCardIds: [],
   currentHand: [],
-  currentTopic: ""
+  currentTopic: "",
+  currentPhase: "waiting",
+
+  playerCount: 0,
+  submissions: []
 };
 
 function makeRoomId() {
@@ -92,18 +102,28 @@ function showLobby() {
   lobby.classList.remove("hidden");
   waiting.classList.add("hidden");
   selecting.classList.add("hidden");
+  revealing.classList.add("hidden");
 }
 
 function showWaiting() {
   lobby.classList.add("hidden");
   waiting.classList.remove("hidden");
   selecting.classList.add("hidden");
+  revealing.classList.add("hidden");
 }
 
 function showSelecting() {
   lobby.classList.add("hidden");
   waiting.classList.add("hidden");
   selecting.classList.remove("hidden");
+  revealing.classList.add("hidden");
+}
+
+function showRevealing() {
+  lobby.classList.add("hidden");
+  waiting.classList.add("hidden");
+  selecting.classList.add("hidden");
+  revealing.classList.remove("hidden");
 }
 
 function setLobbyMessage(text) {
@@ -138,6 +158,8 @@ function watchPlayers() {
   state.unsubscribePlayers = onSnapshot(playersRef, (snapshot) => {
     playerList.innerHTML = "";
 
+    state.playerCount = snapshot.size;
+
     snapshot.forEach((docSnap) => {
       const player = docSnap.data();
 
@@ -148,6 +170,8 @@ function watchPlayers() {
 
       playerList.appendChild(li);
     });
+
+    checkAllSubmitted();
   });
 }
 
@@ -159,18 +183,28 @@ function watchRoom() {
   const roomRef = doc(db, "rooms", state.roomId);
 
   state.unsubscribeRoom = onSnapshot(roomRef, (docSnap) => {
-    if (!docSnap.exists()) {
-      setWaitingMessage("部屋が見つからない");
-      return;
-    }
+  if (!docSnap.exists()) {
+    setWaitingMessage("部屋が見つからない");
+    return;
+  }
 
-    const room = docSnap.data();
+  const room = docSnap.data();
 
-    if (room.phase === "selecting") {
-  state.currentTopic = room.topic;
-  startSelecting(room.topic);
-}
-  });
+  state.currentPhase = room.phase;
+  state.currentTopic = room.topic || "";
+
+  if (room.phase === "waiting") {
+    showWaiting();
+  }
+
+  if (room.phase === "selecting") {
+    startSelecting(room.topic);
+  }
+
+  if (room.phase === "revealing") {
+    startRevealing(room.topic);
+  }
+});
 }
 
 function enterRoom() {
@@ -180,6 +214,7 @@ function enterRoom() {
   showWaiting();
   watchPlayers();
   watchRoom();
+  watchSubmissions();
 }
 
 createRoomBtn.addEventListener("click", async () => {
@@ -385,3 +420,80 @@ submitCardsBtn.addEventListener("click", async () => {
   selectingMessage.textContent = "提出した。全員の提出を待とう。";
   submitCardsBtn.disabled = true;
 });
+
+function watchSubmissions() {
+  if (state.unsubscribeSubmissions) {
+    state.unsubscribeSubmissions();
+  }
+
+  const submissionsRef = collection(db, "rooms", state.roomId, "submissions");
+
+  state.unsubscribeSubmissions = onSnapshot(submissionsRef, (snapshot) => {
+    state.submissions = [];
+
+    snapshot.forEach((docSnap) => {
+      state.submissions.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    if (state.currentPhase === "selecting") {
+      selectingMessage.textContent =
+        `提出済み：${state.submissions.length}/${state.playerCount}`;
+    }
+
+    checkAllSubmitted();
+
+    if (state.currentPhase === "revealing") {
+      renderAnonymousResults();
+    }
+  });
+}
+
+async function checkAllSubmitted() {
+  if (!state.isHost) return;
+  if (state.currentPhase !== "selecting") return;
+  if (state.playerCount <= 0) return;
+  if (state.submissions.length < state.playerCount) return;
+
+  try {
+    await updateDoc(doc(db, "rooms", state.roomId), {
+      phase: "revealing"
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function startRevealing(topic) {
+  revealingTopicText.textContent = topic;
+  revealingMessage.textContent = "誰が作ったかはまだ秘密。";
+  renderAnonymousResults();
+  showRevealing();
+}
+
+function renderAnonymousResults() {
+  anonymousResults.innerHTML = "";
+
+  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const sortedSubmissions = [...state.submissions].sort((a, b) => {
+    return a.playerId.localeCompare(b.playerId);
+  });
+
+  sortedSubmissions.forEach((submission, index) => {
+    const label = labels[index];
+
+    const div = document.createElement("div");
+    div.className = "anonymous-card";
+
+    div.innerHTML = `
+      <span class="label">${label}</span>
+      <h3>【${submission.title}】</h3>
+      <p>${submission.text}</p>
+    `;
+
+    anonymousResults.appendChild(div);
+  });
+}
