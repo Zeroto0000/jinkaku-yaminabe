@@ -262,13 +262,8 @@ state.currentTopicId = room.currentTopicId || "";
   }
 
     if (room.phase === "voting") {
-  showRevealing();
-  revealingTopicText.textContent = "回答完了";
-  anonymousResults.innerHTML = "";
-  voteArea.innerHTML = "";
-  revealingMessage.textContent = "全お題の回答が終わった。次は投票パートを作る。";
+  startVoting();
 }
-
 
     
     if (room.phase === "result") {
@@ -873,4 +868,84 @@ function getCurrentTopicSubmissions() {
   return state.submissions.filter((submission) => {
     return submission.topicId === state.currentTopicId;
   });
+}
+
+function startVoting() {
+  const currentTopic = state.roomTopics[state.topicIndex];
+
+  if (!currentTopic) {
+    revealingMessage.textContent = "投票するお題が見つからない";
+    showRevealing();
+    return;
+  }
+
+  revealingTopicText.textContent =
+    `投票 ${state.topicIndex + 1} / ${state.roomTopics.length}：${currentTopic.text}`;
+
+  anonymousResults.innerHTML = "";
+  voteArea.innerHTML = "";
+  revealingMessage.textContent = "一番おもしろい人格に投票しよう。";
+
+  const currentAnswers = state.submissions.filter((submission) => {
+    return submission.topicId === currentTopic.id;
+  });
+
+  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  currentAnswers
+    .sort((a, b) => a.playerId.localeCompare(b.playerId))
+    .forEach((answer, index) => {
+      const label = labels[index];
+
+      const div = document.createElement("div");
+      div.className = "anonymous-card";
+
+      div.innerHTML = `
+        <span class="label">${label}</span>
+        <h3>【${answer.title}】</h3>
+        <p>${answer.text}</p>
+      `;
+
+      anonymousResults.appendChild(div);
+
+      const voteButton = document.createElement("button");
+      voteButton.className = "vote-button";
+      voteButton.textContent = `${label} に投票`;
+
+      const isMine = answer.playerId === state.playerId;
+      const canVoteSelf = state.playerCount <= 2;
+
+      if (isMine && !canVoteSelf) {
+        voteButton.textContent = `${label} は自分の作品`;
+        voteButton.disabled = true;
+      } else {
+        voteButton.addEventListener("click", () => {
+          submitTopicVote(currentTopic.id, label, answer.playerId);
+        });
+      }
+
+      voteArea.appendChild(voteButton);
+    });
+
+  showRevealing();
+}
+
+async function submitTopicVote(topicId, label, targetPlayerId) {
+  const voteId = `${topicId}_${state.playerId}`;
+
+  try {
+    await setDoc(doc(db, "rooms", state.roomId, "votes", voteId), {
+      topicId,
+      voterId: state.playerId,
+      voterName: state.playerName,
+      label,
+      targetPlayerId,
+      createdAt: serverTimestamp()
+    });
+
+    revealingMessage.textContent = `投票した：${label}`;
+  } catch (error) {
+    console.error(error);
+    revealingMessage.textContent = "投票に失敗した";
+  }
 }
