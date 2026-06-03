@@ -312,3 +312,18 @@ button.mini {
 .eventText {
   color: #f7e3b0;
 }
+
+.card-button .alias {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffcf7a;
+}
+
+.card-button .tags {
+  display: block;
+  margin-top: 8px;
+  color: #a884ff;
+  font-size: 12px;
+}
