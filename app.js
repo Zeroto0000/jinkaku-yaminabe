@@ -273,6 +273,14 @@ state.currentTopicId = room.currentTopicId || "";
     if (room.phase === "topicSubmit") {
   showTopicSubmit();
 }
+
+    if (room.phase === "final") {
+  showResult();
+  resultTopicText.textContent = "最終結果";
+  resultArea.innerHTML = "";
+  resultMessage.textContent = "全投票が終わった。次は最終結果を作る。";
+}
+    
 });
 }
 
@@ -636,16 +644,18 @@ function watchVotes() {
       });
     });
 
-    if (state.currentPhase === "revealing") {
-      revealingMessage.textContent =
-        `投票済み：${state.votes.length}/${state.playerCount}`;
-    }
+    if (state.currentPhase === "voting") {
+  const currentTopic = state.roomTopics[state.topicIndex];
 
-    checkAllVoted();
+  if (currentTopic) {
+    const currentVotes = getCurrentTopicVotes(currentTopic.id);
 
-    if (state.currentPhase === "result") {
-      renderResult();
-    }
+    revealingMessage.textContent =
+      `投票済み：${currentVotes.length}/${state.playerCount}`;
+  }
+
+  checkAllTopicVoted();
+}
   });
 }
 
@@ -947,5 +957,41 @@ async function submitTopicVote(topicId, label, targetPlayerId) {
   } catch (error) {
     console.error(error);
     revealingMessage.textContent = "投票に失敗した";
+  }
+}
+function getCurrentTopicVotes(topicId) {
+  return state.votes.filter((vote) => {
+    return vote.topicId === topicId;
+  });
+}
+async function checkAllTopicVoted() {
+  if (!state.isHost) return;
+  if (state.currentPhase !== "voting") return;
+  if (state.playerCount <= 0) return;
+
+  const currentTopic = state.roomTopics[state.topicIndex];
+
+  if (!currentTopic) return;
+
+  const currentVotes = getCurrentTopicVotes(currentTopic.id);
+
+  if (currentVotes.length < state.playerCount) return;
+
+  const nextIndex = state.topicIndex + 1;
+  const nextTopic = state.roomTopics[nextIndex];
+
+  try {
+    if (nextTopic) {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        topicIndex: nextIndex
+      });
+    } else {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        phase: "final",
+        topicIndex: 0
+      });
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
