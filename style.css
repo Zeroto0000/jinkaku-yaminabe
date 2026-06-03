@@ -294,3 +294,21 @@ button.mini {
   color: #241f30;
   font-weight: 800;
 }
+
+.event-box {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #ffcf7a;
+  border-radius: 12px;
+  background: #2d2415;
+}
+
+.event-name {
+  font-weight: 800;
+  color: #ffcf7a;
+  margin-bottom: 4px;
+}
+
+.eventText {
+  color: #f7e3b0;
+}
