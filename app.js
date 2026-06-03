@@ -998,13 +998,14 @@ async function checkAllTopicsSubmitted() {
   if (state.topics.length < state.playerCount) return;
 
   const shuffledTopics = shuffleArray(state.topics).map((topic, index) => {
-    return {
-      id: `topic_${index}`,
-      text: topic.text,
-      authorId: topic.playerId,
-      authorName: topic.playerName
-    };
-  });
+  return {
+    id: `topic_${index}`,
+    text: topic.text,
+    authorId: topic.playerId,
+    authorName: topic.playerName,
+    event: getRandomEvent()
+  };
+});
 
   const firstTopic = shuffledTopics[0];
 
