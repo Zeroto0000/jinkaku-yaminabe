@@ -79,6 +79,11 @@ const resultMessage = document.getElementById("resultMessage");
 
 const playAgainBtn = document.getElementById("playAgainBtn");
 
+const topicSubmit = document.getElementById("topicSubmit");
+const myTopicInput = document.getElementById("myTopicInput");
+const submitTopicBtn = document.getElementById("submitTopicBtn");
+const topicSubmitMessage = document.getElementById("topicSubmitMessage");
+
 const state = {
   roomId: "",
   playerId: "",
@@ -116,6 +121,7 @@ function showLobby() {
   waiting.classList.add("hidden");
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
+  topicSubmit.classList.add("hidden");
   result.classList.add("hidden");
 }
 
@@ -124,6 +130,7 @@ function showWaiting() {
   waiting.classList.remove("hidden");
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
+  topicSubmit.classList.add("hidden");
   result.classList.add("hidden");
 }
 
@@ -132,6 +139,7 @@ function showSelecting() {
   waiting.classList.add("hidden");
   selecting.classList.remove("hidden");
   revealing.classList.add("hidden");
+  topicSubmit.classList.add("hidden");
   result.classList.add("hidden");
 }
 
@@ -141,6 +149,7 @@ function showRevealing() {
   selecting.classList.add("hidden");
   revealing.classList.remove("hidden");
   result.classList.add("hidden");
+  topicSubmit.classList.add("hidden");
 }
 
 function showResult() {
@@ -149,7 +158,18 @@ function showResult() {
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
   result.classList.remove("hidden");
+  topicSubmit.classList.add("hidden");
 }
+
+function showTopicSubmit() {
+  lobby.classList.add("hidden");
+  waiting.classList.add("hidden");
+  topicSubmit.classList.remove("hidden");
+  selecting.classList.add("hidden");
+  revealing.classList.add("hidden");
+  result.classList.add("hidden");
+}
+
 function setLobbyMessage(text) {
   lobbyMessage.textContent = text;
 }
@@ -230,6 +250,10 @@ function watchRoom() {
   }
     if (room.phase === "result") {
   startResult(room.topic);
+}
+
+    if (room.phase === "topicSubmit") {
+  showTopicSubmit();
 }
 });
 }
