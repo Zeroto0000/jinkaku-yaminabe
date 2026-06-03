@@ -275,10 +275,7 @@ state.currentTopicId = room.currentTopicId || "";
 }
 
     if (room.phase === "final") {
-  showResult();
-  resultTopicText.textContent = "最終結果";
-  resultArea.innerHTML = "";
-  resultMessage.textContent = "全投票が終わった。次は最終結果を作る。";
+  startFinal();
 }
     
 });
@@ -766,16 +763,16 @@ playAgainBtn.addEventListener("click", async () => {
     await clearCollection("votes");
     await clearCollection("topics");
 
-    await updateDoc(doc(db, "rooms", state.roomId), {
-      phase: "waiting",
-      topic: "",
-      topics: [],
-      topicIndex: 0,
-      currentTopicId: "",
-      voteIndex: 0,
-      restartedAt: serverTimestamp()
-    });
-
+  await updateDoc(doc(db, "rooms", state.roomId), {
+  phase: "waiting",
+  topic: "",
+  topics: [],
+  topicIndex: 0,
+  currentTopicId: "",
+  voteIndex: 0,
+  restartedAt: serverTimestamp()
+});
+    
     resultMessage.textContent = "";
   } catch (error) {
     console.error(error);
@@ -994,4 +991,132 @@ async function checkAllTopicVoted() {
   } catch (error) {
     console.error(error);
   }
+}
+
+function startFinal() {
+  resultTopicText.textContent = "最終結果";
+  resultMessage.textContent = "全お題の投票結果を公開。";
+  playAgainBtn.classList.toggle("hidden", !state.isHost);
+
+  renderFinalResult();
+  showResult();
+}
+
+function renderFinalResult() {
+  resultArea.innerHTML = "";
+
+  const playerScores = {};
+  const topicResults = [];
+
+  // プレイヤー初期化
+  state.submissions.forEach((answer) => {
+    if (!playerScores[answer.playerId]) {
+      playerScores[answer.playerId] = {
+        playerId: answer.playerId,
+        playerName: answer.playerName,
+        score: 0
+      };
+    }
+  });
+
+  // お題ごとに集計
+  state.roomTopics.forEach((topic) => {
+    const answers = state.submissions.filter((answer) => {
+      return answer.topicId === topic.id;
+    });
+
+    const votes = state.votes.filter((vote) => {
+      return vote.topicId === topic.id;
+    });
+
+    const counts = {};
+
+    answers.forEach((answer) => {
+      counts[answer.playerId] = {
+        count: 0,
+        answer
+      };
+    });
+
+    votes.forEach((vote) => {
+      if (counts[vote.targetPlayerId]) {
+        counts[vote.targetPlayerId].count++;
+
+        if (playerScores[vote.targetPlayerId]) {
+          playerScores[vote.targetPlayerId].score++;
+        }
+      }
+    });
+
+    const ranking = Object.values(counts).sort((a, b) => {
+      return b.count - a.count;
+    });
+
+    topicResults.push({
+      topic,
+      ranking
+    });
+  });
+
+  renderTotalRanking(playerScores);
+  renderTopicResults(topicResults);
+}
+
+function renderTotalRanking(playerScores) {
+  const title = document.createElement("h3");
+  title.textContent = "総合順位";
+  resultArea.appendChild(title);
+
+  const ranking = Object.values(playerScores).sort((a, b) => {
+    return b.score - a.score;
+  });
+
+  let currentRank = 0;
+  let previousScore = null;
+
+  ranking.forEach((player, index) => {
+    if (player.score !== previousScore) {
+      currentRank = index + 1;
+      previousScore = player.score;
+    }
+
+    const div = document.createElement("div");
+    div.className = currentRank === 1 ? "result-rank winner" : "result-rank";
+
+    div.innerHTML = `
+      <span class="rank">${currentRank}位 / ${player.score}票</span>
+      <h3>${player.playerName}</h3>
+    `;
+
+    resultArea.appendChild(div);
+  });
+}
+
+function renderTopicResults(topicResults) {
+  const title = document.createElement("h3");
+  title.textContent = "お題ごとの結果";
+  resultArea.appendChild(title);
+
+  topicResults.forEach((topicResult, topicIndex) => {
+    const box = document.createElement("div");
+    box.className = "result-rank";
+
+    const rankingHtml = topicResult.ranking.map((item, index) => {
+      return `
+        <div style="margin-top: 12px;">
+          <strong>${index + 1}位 / ${item.count}票：${item.answer.playerName}</strong>
+          <div>【${item.answer.title}】</div>
+          <p>${item.answer.text}</p>
+        </div>
+      `;
+    }).join("");
+
+    box.innerHTML = `
+      <span class="rank">第${topicIndex + 1}問</span>
+      <h3>${topicResult.topic.text}</h3>
+      ${rankingHtml}
+    `;
+
+    resultArea.appendChild(box);
+  });
 }
