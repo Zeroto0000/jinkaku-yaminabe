@@ -22,19 +22,23 @@ import {
 
 const DEFAULT_TOPICS = [
   "恋愛失敗しそうな人",
-  "職場にいたら面倒くさい人",
   "SNSで炎上しそうな人",
-  "友達にしたら楽しそうな人",
   "上司にしたくない人",
+  "友達にしたら楽しそうな人",
   "なんだかんだモテそうな人",
   "実は一番闇が深そうな人",
   "相談したら余計ややこしくしそうな人",
   "グループ作業で揉めそうな人",
-  "ラスボスになりそうな人"
+  "ラスボスになりそうな人",
+  "好きな人の前でバグりそうな人"
 ];
 
 function getRandomTopic() {
   return DEFAULT_TOPICS[Math.floor(Math.random() * DEFAULT_TOPICS.length)];
+}
+
+function shuffleArray(array) {
+  return [...array].sort(() => Math.random() - 0.5);
 }
 
 const lobby = document.getElementById("lobby");
@@ -93,6 +97,7 @@ const state = {
   unsubscribeRoom: null,
   unsubscribeSubmissions: null,
   unsubscribeVotes: null,
+  unsubscribeTopics: null,
 
   selectedCardIds: [],
   currentHand: [],
@@ -101,7 +106,8 @@ const state = {
 
   playerCount: 0,
   submissions: [],
-  votes: []
+  votes: [],
+  topics: []
 };
 
 function makeRoomId() {
@@ -267,6 +273,7 @@ function enterRoom() {
   watchRoom();
   watchSubmissions();
   watchVotes();
+  watchTopics();
 }
 createRoomBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
@@ -734,4 +741,79 @@ async function clearCollection(collectionName) {
   });
 
   await Promise.all(deletePromises);
+}
+
+submitTopicBtn.addEventListener("click", async () => {
+  const topicText = myTopicInput.value.trim() || getRandomTopic();
+
+  try {
+    await setDoc(doc(db, "rooms", state.roomId, "topics", state.playerId), {
+      playerId: state.playerId,
+      playerName: state.playerName,
+      text: topicText,
+      createdAt: serverTimestamp()
+    });
+
+    topicSubmitMessage.textContent = "お題を提出した。全員の提出を待とう。";
+    submitTopicBtn.disabled = true;
+    myTopicInput.disabled = true;
+  } catch (error) {
+    console.error(error);
+    topicSubmitMessage.textContent = "お題提出に失敗した";
+  }
+});
+
+function watchTopics() {
+  if (state.unsubscribeTopics) {
+    state.unsubscribeTopics();
+  }
+
+  const topicsRef = collection(db, "rooms", state.roomId, "topics");
+
+  state.unsubscribeTopics = onSnapshot(topicsRef, (snapshot) => {
+    state.topics = [];
+
+    snapshot.forEach((docSnap) => {
+      state.topics.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    if (state.currentPhase === "topicSubmit") {
+      topicSubmitMessage.textContent =
+        `お題提出済み：${state.topics.length}/${state.playerCount}`;
+    }
+
+    checkAllTopicsSubmitted();
+  });
+}
+
+async function checkAllTopicsSubmitted() {
+  if (!state.isHost) return;
+  if (state.currentPhase !== "topicSubmit") return;
+  if (state.playerCount <= 0) return;
+  if (state.topics.length < state.playerCount) return;
+
+  const shuffledTopics = shuffleArray(state.topics).map((topic, index) => {
+    return {
+      id: `topic_${index}`,
+      text: topic.text,
+      authorId: topic.playerId,
+      authorName: topic.playerName
+    };
+  });
+
+  const firstTopic = shuffledTopics[0];
+
+  try {
+    await updateDoc(doc(db, "rooms", state.roomId), {
+      phase: "selecting",
+      topics: shuffledTopics,
+      topicIndex: 0,
+      topic: firstTopic.text
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
