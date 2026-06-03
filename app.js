@@ -734,14 +734,18 @@ playAgainBtn.addEventListener("click", async () => {
 
     await clearCollection("submissions");
     await clearCollection("votes");
+    await clearCollection("topics");
 
     await updateDoc(doc(db, "rooms", state.roomId), {
       phase: "waiting",
       topic: "",
+      topics: [],
+      topicIndex: 0,
+      currentTopicId: "",
+      voteIndex: 0,
       restartedAt: serverTimestamp()
     });
 
-    topicInput.value = "";
     resultMessage.textContent = "";
   } catch (error) {
     console.error(error);
