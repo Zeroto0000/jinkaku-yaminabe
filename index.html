@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>人格闇鍋</title>
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>人格闇鍋</h1>
+      <p>匿名で人格を合成しろ</p>
+    </header>
+
+    <!-- ロビー -->
+    <section id="lobby" class="card">
+      <h2>はじめる</h2>
+
+      <label>
+        名前
+        <input id="nameInput" type="text" placeholder="例：24" maxlength="12" />
+      </label>
+
+      <button id="createRoomBtn">部屋を作る</button>
+
+      <div class="divider">または</div>
+
+      <label>
+        部屋ID
+        <input id="roomIdInput" type="text" placeholder="例：ABC123" maxlength="6" />
+      </label>
+
+      <button id="joinRoomBtn" class="sub">部屋に参加する</button>
+
+      <p id="lobbyMessage" class="message"></p>
+    </section>
+
+    <!-- 待機画面 -->
+    <section id="waiting" class="card hidden">
+      <h2>待機中</h2>
+
+      <div class="room-box">
+        <p>部屋ID</p>
+        <div class="room-id-row">
+          <strong id="roomIdText">------</strong>
+          <button id="copyRoomIdBtn" class="mini">コピー</button>
+        </div>
+      </div>
+
+      <h3>参加者</h3>
+      <ul id="playerList" class="player-list"></ul>
+
+      <div id="hostArea" class="host-area hidden">
+        <label>
+          今回のお題
+          <input id="topicInput" type="text" placeholder="例：恋愛失敗しそうな人" />
+        </label>
+
+        <button id="startGameBtn">ゲーム開始</button>
+      </div>
+
+      <p id="waitingMessage" class="message"></p>
+    </section>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
