@@ -600,6 +600,7 @@ if (currentTopic && currentTopic.event) {
     const button = document.createElement("button");
     button.className = "card-button";
     button.dataset.cardId = card.id;
+    button.dataset.cardType = card.type;
 
     button.innerHTML = `
   <span class="type">${card.type}</span>
