@@ -708,19 +708,27 @@ function renderResult() {
     return b.count - a.count;
   });
 
-  ranking.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = index === 0 ? "result-rank winner" : "result-rank";
+  let currentRank = 0;
+let previousCount = null;
 
-    div.innerHTML = `
-      <span class="rank">${index + 1}位 / ${item.count}票</span>
-      <h3>${item.label}：【${item.submission.title}】</h3>
-      <p>${item.submission.text}</p>
-      <p><strong>作者：${item.submission.playerName}</strong></p>
-    `;
+ranking.forEach((item, index) => {
+  if (item.count !== previousCount) {
+    currentRank = index + 1;
+    previousCount = item.count;
+  }
 
-    resultArea.appendChild(div);
-  });
+  const div = document.createElement("div");
+  div.className = currentRank === 1 ? "result-rank winner" : "result-rank";
+
+  div.innerHTML = `
+    <span class="rank">${currentRank}位 / ${item.count}票</span>
+    <h3>${item.label}：【${item.submission.title}】</h3>
+    <p>${item.submission.text}</p>
+    <p><strong>作者：${item.submission.playerName}</strong></p>
+  `;
+
+  resultArea.appendChild(div);
+});
 }
 
 playAgainBtn.addEventListener("click", async () => {
