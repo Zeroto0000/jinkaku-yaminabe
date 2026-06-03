@@ -602,10 +602,12 @@ if (currentTopic && currentTopic.event) {
     button.dataset.cardId = card.id;
 
     button.innerHTML = `
-      <span class="type">${card.type}</span>
-      <span class="name">${card.name}</span>
-      <span class="text">${card.text}</span>
-    `;
+  <span class="type">${card.type}</span>
+  <span class="name">${card.name}</span>
+  <span class="alias">${card.alias || ""}</span>
+  <span class="text">${card.text}</span>
+  <span class="tags">${(card.tags || []).join(" / ")}</span>
+`;
 
     button.addEventListener("click", () => {
       toggleCard(card.id, button);
