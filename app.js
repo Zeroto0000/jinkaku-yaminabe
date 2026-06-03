@@ -296,3 +296,80 @@ if (state.roomId && state.playerId) {
 } else {
   showLobby();
 }
+
+function startSelecting(topic) {
+  state.selectedCardIds = [];
+  state.currentHand = drawHand(5);
+
+  selectingTopicText.textContent = topic;
+  handArea.innerHTML = "";
+  myResultArea.classList.add("hidden");
+  selectingMessage.textContent = "";
+  submitCardsBtn.disabled = false;
+
+  state.currentHand.forEach((card) => {
+    const button = document.createElement("button");
+    button.className = "card-button";
+    button.dataset.cardId = card.id;
+
+    button.innerHTML = `
+      <span class="type">${card.type}</span>
+      <span class="name">${card.name}</span>
+      <span class="text">${card.text}</span>
+    `;
+
+    button.addEventListener("click", () => {
+      toggleCard(card.id, button);
+    });
+
+    handArea.appendChild(button);
+  });
+
+  showSelecting();
+}
+
+function toggleCard(cardId, button) {
+  const alreadySelected = state.selectedCardIds.includes(cardId);
+
+  if (alreadySelected) {
+    state.selectedCardIds = state.selectedCardIds.filter(id => id !== cardId);
+    button.classList.remove("selected");
+    selectingMessage.textContent = "";
+    return;
+  }
+
+  if (state.selectedCardIds.length >= 3) {
+    selectingMessage.textContent = "選べるのは3枚まで";
+    return;
+  }
+
+  state.selectedCardIds.push(cardId);
+  button.classList.add("selected");
+  selectingMessage.textContent = `${state.selectedCardIds.length}/3枚選択中`;
+}
+
+submitCardsBtn.addEventListener("click", async () => {
+  if (state.selectedCardIds.length !== 3) {
+    selectingMessage.textContent = "3枚選んで";
+    return;
+  }
+
+  const selectedCards = state.selectedCardIds.map(id => getCardById(id));
+  const result = createChimera(selectedCards, state.currentTopic);
+
+  await setDoc(doc(db, "rooms", state.roomId, "submissions", state.playerId), {
+    playerId: state.playerId,
+    playerName: state.playerName,
+    cardIds: state.selectedCardIds,
+    title: result.title,
+    text: result.text,
+    createdAt: serverTimestamp()
+  });
+
+  myResultTitle.textContent = `【${result.title}】`;
+  myResultText.textContent = result.text;
+  myResultArea.classList.remove("hidden");
+
+  selectingMessage.textContent = "提出した。全員の提出を待とう。";
+  submitCardsBtn.disabled = true;
+});
