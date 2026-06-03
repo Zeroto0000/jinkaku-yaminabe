@@ -1,118 +1,149 @@
 export const CARDS = [
   {
-    id: "E",
-    name: "E",
-    type: "MBTI",
-    text: "外に向かう。人との関わりの中で元気が出やすい。",
-    resultText: "外に向かう。"
-  },
-  {
-    id: "I",
-    name: "I",
-    type: "MBTI",
-    text: "内側に向かう。ひとりで考える時間を大事にする。",
-    resultText: "内側に向かう。"
-  },
-  {
-    id: "S",
-    name: "S",
-    type: "MBTI",
-    text: "現実を見る。具体的で分かりやすいことを重視する。",
-    resultText: "現実を見る。"
-  },
-  {
-    id: "N",
-    name: "N",
-    type: "MBTI",
-    text: "可能性を見る。まだ見えていない意味や未来を考える。",
-    resultText: "可能性を見る。"
-  },
-  {
-    id: "T",
-    name: "T",
-    type: "MBTI",
-    text: "理屈で判断する。正しさや筋の通り方を重視する。",
-    resultText: "理屈で判断する。"
-  },
-  {
-    id: "F",
-    name: "F",
-    type: "MBTI",
-    text: "気持ちで判断する。人の感情や関係性を重視する。",
-    resultText: "気持ちで判断する。"
-  },
-  {
-    id: "J",
-    name: "J",
-    type: "MBTI",
-    text: "決めてから動きたい。予定や結論があると安心する。",
-    resultText: "決めてから動きたい。"
-  },
-  {
-    id: "P",
-    name: "P",
-    type: "MBTI",
-    text: "流れで動きたい。その場のノリや自由さを大事にする。",
-    resultText: "流れで動きたい。"
-  },
+  id: "E",
+  name: "E",
+  type: "MBTI",
+  alias: "外向エンジン",
+  text: "外に向かう。人との関わりの中で元気が出やすい。",
+  resultText: "外に向かう。",
+  tags: ["陽", "距離近", "加速"]
+},
+{
+  id: "I",
+  name: "I",
+  type: "MBTI",
+  alias: "内省シェルター",
+  text: "内側に向かう。ひとりで考える時間を大事にする。",
+  resultText: "内側に向かう。",
+  tags: ["陰", "内省", "距離感"]
+},
+{
+  id: "S",
+  name: "S",
+  type: "MBTI",
+  alias: "現実センサー",
+  text: "現実を見る。具体的で分かりやすいことを重視する。",
+  resultText: "現実を見る。",
+  tags: ["現実", "具体", "安定"]
+},
+{
+  id: "N",
+  name: "N",
+  type: "MBTI",
+  alias: "妄想アンテナ",
+  text: "可能性を見る。まだ見えていない意味や未来を考える。",
+  resultText: "可能性を見る。",
+  tags: ["発想", "未来", "概念"]
+},
+{
+  id: "T",
+  name: "T",
+  type: "MBTI",
+  alias: "理屈の刃",
+  text: "理屈で判断する。正しさや筋の通り方を重視する。",
+  resultText: "理屈で判断する。",
+  tags: ["理屈", "冷静", "切断"]
+},
+{
+  id: "F",
+  name: "F",
+  type: "MBTI",
+  alias: "感情レーダー",
+  text: "気持ちで判断する。人の感情や関係性を重視する。",
+  resultText: "気持ちで判断する。",
+  tags: ["共感", "関係", "温度"]
+},
+{
+  id: "J",
+  name: "J",
+  type: "MBTI",
+  alias: "予定固定装置",
+  text: "決めてから動きたい。予定や結論があると安心する。",
+  resultText: "決めてから動きたい。",
+  tags: ["計画", "固定", "管理"]
+},
+{
+  id: "P",
+  name: "P",
+  type: "MBTI",
+  alias: "流れ乗り職人",
+  text: "流れで動きたい。その場のノリや自由さを大事にする。",
+  resultText: "流れで動きたい。",
+  tags: ["自由", "ノリ", "柔軟"]
+},
 
   {
-    id: "Se",
-    name: "Se",
-    type: "心理機能",
-    text: "今この瞬間を見てすぐ動く。勢いと現場対応に強い。",
-    resultText: "今すぐ動く。"
-  },
-  {
-    id: "Si",
-    name: "Si",
-    type: "心理機能",
-    text: "過去の経験や慣れたやり方を大事にする。",
-    resultText: "経験を信じる。"
-  },
-  {
-    id: "Ne",
-    name: "Ne",
-    type: "心理機能",
-    text: "色んな可能性を広げる。話があちこちに飛びやすい。",
-    resultText: "発想を広げる。"
-  },
-  {
-    id: "Ni",
-    name: "Ni",
-    type: "心理機能",
-    text: "先の展開や裏の意味を読む。深読みしやすい。",
-    resultText: "未来を読む。"
-  },
-  {
-    id: "Te",
-    name: "Te",
-    type: "心理機能",
-    text: "結果や効率を重視する。できていない部分を詰めやすい。",
-    resultText: "結果で詰める。"
-  },
-  {
-    id: "Ti",
-    name: "Ti",
-    type: "心理機能",
-    text: "仕組みや理屈を細かく見る。納得できないと止まる。",
-    resultText: "理屈で切る。"
-  },
-  {
-    id: "Fe",
-    name: "Fe",
-    type: "心理機能",
-    text: "場の空気や相手の反応を読む。人に合わせるのがうまい。",
-    resultText: "空気を読む。"
-  },
-  {
-    id: "Fi",
-    name: "Fi",
-    type: "心理機能",
-    text: "自分の気持ちや価値観を大事にする。譲れない部分がある。",
-    resultText: "自分の気持ちを守る。"
-  },
-
+  id: "Se",
+  name: "Se",
+  type: "心理機能",
+  alias: "現場突撃センサー",
+  text: "今この瞬間を見てすぐ動く。勢いと現場対応に強い。",
+  resultText: "今すぐ動く。",
+  tags: ["即行動", "現場", "勢い"]
+},
+{
+  id: "Si",
+  name: "Si",
+  type: "心理機能",
+  alias: "記憶の保管庫",
+  text: "過去の経験や慣れたやり方を大事にする。",
+  resultText: "経験を信じる。",
+  tags: ["経験", "安定", "保守"]
+},
+{
+  id: "Ne",
+  name: "Ne",
+  type: "心理機能",
+  alias: "発想花火",
+  text: "色んな可能性を広げる。話があちこちに飛びやすい。",
+  resultText: "発想を広げる。",
+  tags: ["拡散", "ひらめき", "脱線"]
+},
+{
+  id: "Ni",
+  name: "Ni",
+  type: "心理機能",
+  alias: "未来予知もどき",
+  text: "先の展開や裏の意味を読む。深読みしやすい。",
+  resultText: "未来を読む。",
+  tags: ["深読み", "未来", "予感"]
+},
+{
+  id: "Te",
+  name: "Te",
+  type: "心理機能",
+  alias: "成果圧縮マシン",
+  text: "結果や効率を重視する。できていない部分を詰めやすい。",
+  resultText: "結果で詰める。",
+  tags: ["効率", "成果", "圧"]
+},
+{
+  id: "Ti",
+  name: "Ti",
+  type: "心理機能",
+  alias: "納得分解ナイフ",
+  text: "仕組みや理屈を細かく見る。納得できないと止まる。",
+  resultText: "理屈で切る。",
+  tags: ["分析", "分解", "納得厨"]
+},
+{
+  id: "Fe",
+  name: "Fe",
+  type: "心理機能",
+  alias: "空気調律師",
+  text: "場の空気や相手の反応を読む。人に合わせるのがうまい。",
+  resultText: "空気を読む。",
+  tags: ["空気", "共鳴", "調整"]
+},
+{
+  id: "Fi",
+  name: "Fi",
+  type: "心理機能",
+  alias: "本音の聖域",
+  text: "自分の気持ちや価値観を大事にする。譲れない部分がある。",
+  resultText: "自分の気持ちを守る。",
+  tags: ["本音", "価値観", "譲れない"]
+},
   {
     id: "ennea_1",
     name: "1",
