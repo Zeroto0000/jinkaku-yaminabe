@@ -243,7 +243,9 @@ function watchRoom() {
 
   const room = docSnap.data();
 
-  state.roomTopics = room.topics || [];
+state.currentPhase = room.phase;
+state.currentTopic = room.topic || "";
+state.roomTopics = room.topics || [];
 state.topicIndex = room.topicIndex || 0;
 state.currentTopicId = room.currentTopicId || "";
 
@@ -808,33 +810,31 @@ function watchTopics() {
   });
 }
 
-async function checkAllSubmitted() {
+async function checkAllTopicsSubmitted() {
   if (!state.isHost) return;
-  if (state.currentPhase !== "selecting") return;
+  if (state.currentPhase !== "topicSubmit") return;
   if (state.playerCount <= 0) return;
-  if (!state.currentTopicId) return;
+  if (state.topics.length < state.playerCount) return;
 
-  const currentSubmissions = getCurrentTopicSubmissions();
+  const shuffledTopics = shuffleArray(state.topics).map((topic, index) => {
+    return {
+      id: `topic_${index}`,
+      text: topic.text,
+      authorId: topic.playerId,
+      authorName: topic.playerName
+    };
+  });
 
-  if (currentSubmissions.length < state.playerCount) return;
-
-  const nextIndex = state.topicIndex + 1;
-  const nextTopic = state.roomTopics[nextIndex];
+  const firstTopic = shuffledTopics[0];
 
   try {
-    if (nextTopic) {
-      await updateDoc(doc(db, "rooms", state.roomId), {
-        topicIndex: nextIndex,
-        currentTopicId: nextTopic.id,
-        topic: nextTopic.text
-      });
-    } else {
-      await updateDoc(doc(db, "rooms", state.roomId), {
-        phase: "voting",
-        voteIndex: 0,
-        topicIndex: 0
-      });
-    }
+    await updateDoc(doc(db, "rooms", state.roomId), {
+      phase: "selecting",
+      topics: shuffledTopics,
+      topicIndex: 0,
+      currentTopicId: firstTopic.id,
+      topic: firstTopic.text
+    });
   } catch (error) {
     console.error(error);
   }
