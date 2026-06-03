@@ -351,10 +351,10 @@ startGameBtn.addEventListener("click", async () => {
 
   try {
     await updateDoc(doc(db, "rooms", state.roomId), {
-      phase: "selecting",
-      topic,
-      startedAt: serverTimestamp()
-    });
+  phase: "topicSubmit",
+  topic: "",
+  startedAt: serverTimestamp()
+});
 
     setWaitingMessage("ゲームを開始した");
   } catch (error) {
