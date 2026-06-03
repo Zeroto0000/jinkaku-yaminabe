@@ -1,5 +1,11 @@
 // app.js
 
+import {
+  drawHand,
+  getCardById,
+  createChimera
+} from "./cards.js";
+
 import { db } from "./firebase.js";
 
 import {
