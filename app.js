@@ -106,7 +106,11 @@ const state = {
   playerCount: 0,
   submissions: [],
   votes: [],
-  topics: []
+  topics: [],
+
+  roomTopics: [],
+topicIndex: 0,
+currentTopicId: ""
 };
 
 function makeRoomId() {
@@ -239,8 +243,9 @@ function watchRoom() {
 
   const room = docSnap.data();
 
-  state.currentPhase = room.phase;
-  state.currentTopic = room.topic || "";
+  state.roomTopics = room.topics || [];
+state.topicIndex = room.topicIndex || 0;
+state.currentTopicId = room.currentTopicId || "";
 
   if (room.phase === "waiting") {
     showWaiting();
@@ -459,14 +464,18 @@ submitCardsBtn.addEventListener("click", async () => {
   const selectedCards = state.selectedCardIds.map(id => getCardById(id));
   const result = createChimera(selectedCards, state.currentTopic);
 
-  await setDoc(doc(db, "rooms", state.roomId, "submissions", state.playerId), {
-    playerId: state.playerId,
-    playerName: state.playerName,
-    cardIds: state.selectedCardIds,
-    title: result.title,
-    text: result.text,
-    createdAt: serverTimestamp()
-  });
+  const submissionId = `${state.currentTopicId}_${state.playerId}`;
+
+await setDoc(doc(db, "rooms", state.roomId, "submissions", submissionId), {
+  topicId: state.currentTopicId,
+  topicText: state.currentTopic,
+  playerId: state.playerId,
+  playerName: state.playerName,
+  cardIds: state.selectedCardIds,
+  title: result.title,
+  text: result.text,
+  createdAt: serverTimestamp()
+});
 
   myResultTitle.textContent = `【${result.title}】`;
   myResultText.textContent = result.text;
@@ -494,9 +503,11 @@ function watchSubmissions() {
     });
 
     if (state.currentPhase === "selecting") {
-      selectingMessage.textContent =
-        `提出済み：${state.submissions.length}/${state.playerCount}`;
-    }
+  const currentSubmissions = getCurrentTopicSubmissions();
+
+  selectingMessage.textContent =
+    `提出済み：${currentSubmissions.length}/${state.playerCount}`;
+}
 
     checkAllSubmitted();
 
@@ -786,31 +797,40 @@ function watchTopics() {
   });
 }
 
-async function checkAllTopicsSubmitted() {
+async function checkAllSubmitted() {
   if (!state.isHost) return;
-  if (state.currentPhase !== "topicSubmit") return;
+  if (state.currentPhase !== "selecting") return;
   if (state.playerCount <= 0) return;
-  if (state.topics.length < state.playerCount) return;
+  if (!state.currentTopicId) return;
 
-  const shuffledTopics = shuffleArray(state.topics).map((topic, index) => {
-    return {
-      id: `topic_${index}`,
-      text: topic.text,
-      authorId: topic.playerId,
-      authorName: topic.playerName
-    };
-  });
+  const currentSubmissions = getCurrentTopicSubmissions();
 
-  const firstTopic = shuffledTopics[0];
+  if (currentSubmissions.length < state.playerCount) return;
+
+  const nextIndex = state.topicIndex + 1;
+  const nextTopic = state.roomTopics[nextIndex];
 
   try {
-    await updateDoc(doc(db, "rooms", state.roomId), {
-      phase: "selecting",
-      topics: shuffledTopics,
-      topicIndex: 0,
-      topic: firstTopic.text
-    });
+    if (nextTopic) {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        topicIndex: nextIndex,
+        currentTopicId: nextTopic.id,
+        topic: nextTopic.text
+      });
+    } else {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        phase: "voting",
+        voteIndex: 0,
+        topicIndex: 0
+      });
+    }
   } catch (error) {
     console.error(error);
   }
+}
+
+function getCurrentTopicSubmissions() {
+  return state.submissions.filter((submission) => {
+    return submission.topicId === state.currentTopicId;
+  });
 }
