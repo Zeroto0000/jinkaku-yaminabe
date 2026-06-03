@@ -14,6 +14,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   collection,
   onSnapshot,
   serverTimestamp
@@ -75,6 +76,8 @@ const result = document.getElementById("result");
 const resultTopicText = document.getElementById("resultTopicText");
 const resultArea = document.getElementById("resultArea");
 const resultMessage = document.getElementById("resultMessage");
+
+const playAgainBtn = document.getElementById("playAgainBtn");
 
 const state = {
   roomId: "",
@@ -617,6 +620,7 @@ async function submitVote(label, targetPlayerId) {
 function startResult(topic) {
   resultTopicText.textContent = topic;
   resultMessage.textContent = "作者公開。";
+  playAgainBtn.classList.toggle("hidden", !state.isHost);
   renderResult();
   showResult();
 }
@@ -665,4 +669,45 @@ function renderResult() {
 
     resultArea.appendChild(div);
   });
+}
+
+playAgainBtn.addEventListener("click", async () => {
+  if (!state.isHost) {
+    resultMessage.textContent = "もう一回遊ぶ操作はホストだけできる";
+    return;
+  }
+
+  try {
+    resultMessage.textContent = "次のゲームを準備中...";
+
+    await clearCollection("submissions");
+    await clearCollection("votes");
+
+    await updateDoc(doc(db, "rooms", state.roomId), {
+      phase: "waiting",
+      topic: "",
+      restartedAt: serverTimestamp()
+    });
+
+    topicInput.value = "";
+    resultMessage.textContent = "";
+  } catch (error) {
+    console.error(error);
+    resultMessage.textContent = "準備に失敗した";
+  }
+});
+
+async function clearCollection(collectionName) {
+  const targetRef = collection(db, "rooms", state.roomId, collectionName);
+  const snapshot = await getDocs(targetRef);
+
+  const deletePromises = [];
+
+  snapshot.forEach((docSnap) => {
+    deletePromises.push(
+      deleteDoc(doc(db, "rooms", state.roomId, collectionName, docSnap.id))
+    );
+  });
+
+  await Promise.all(deletePromises);
 }
