@@ -235,6 +235,10 @@ const myTopicInput = document.getElementById("myTopicInput");
 const submitTopicBtn = document.getElementById("submitTopicBtn");
 const topicSubmitMessage = document.getElementById("topicSubmitMessage");
 
+const eventBox = document.getElementById("eventBox");
+const eventName = document.getElementById("eventName");
+const eventText = document.getElementById("eventText");
+
 const state = {
   roomId: "",
   playerId: "",
@@ -573,6 +577,20 @@ function startSelecting(topic) {
 
   selectingTopicText.textContent = topic;
   handArea.innerHTML = "";
+
+const currentTopic = state.roomTopics[state.topicIndex];
+
+if (currentTopic && currentTopic.event) {
+  eventBox.classList.remove("hidden");
+  eventName.textContent = `闇鍋効果：${currentTopic.event.name}`;
+  eventText.textContent = currentTopic.event.text;
+} else {
+  eventBox.classList.add("hidden");
+  eventName.textContent = "";
+  eventText.textContent = "";
+}
+
+  
   myResultArea.classList.add("hidden");
   selectingMessage.textContent = "";
   submitCardsBtn.disabled = false;
@@ -625,6 +643,17 @@ submitCardsBtn.addEventListener("click", async () => {
   }
 
   const selectedCards = state.selectedCardIds.map(id => getCardById(id));
+
+
+  const validation = validateEventRule(selectedCards);
+
+if (!validation.ok) {
+  selectingMessage.textContent = validation.message;
+  return;
+}
+  
+
+
   const result = createChimera(selectedCards, state.currentTopic);
 
   const submissionId = `${state.currentTopicId}_${state.playerId}`;
@@ -1270,4 +1299,43 @@ function renderTopicResults(topicResults) {
 
     resultArea.appendChild(box);
   });
+}
+
+function validateEventRule(selectedCards) {
+  const currentTopic = state.roomTopics[state.topicIndex];
+
+  if (!currentTopic || !currentTopic.event) {
+    return { ok: true, message: "" };
+  }
+
+  const event = currentTopic.event;
+
+  if (event.rule === "free") {
+    return { ok: true, message: "" };
+  }
+
+  const count = selectedCards.filter(card => card.type === event.category).length;
+
+  if (event.rule === "must" && count < 1) {
+    return {
+      ok: false,
+      message: `${event.name}：${event.category}カードを1枚以上入れて`
+    };
+  }
+
+  if (event.rule === "ban" && count > 0) {
+    return {
+      ok: false,
+      message: `${event.name}：${event.category}カードは使えない`
+    };
+  }
+
+  if (event.rule === "two" && count < 2) {
+    return {
+      ok: false,
+      message: `${event.name}：${event.category}カードを2枚以上入れて`
+    };
+  }
+
+  return { ok: true, message: "" };
 }
