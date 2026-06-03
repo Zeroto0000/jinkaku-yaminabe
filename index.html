@@ -66,6 +66,28 @@
     </section>
   </div>
 
+  <!-- カード選択画面 -->
+<section id="selecting" class="card hidden">
+  <h2>カードを選ぶ</h2>
+
+  <p class="topic">
+    今回のテーマ：<strong id="selectingTopicText"></strong>
+  </p>
+
+  <p>手札から3枚選んで、人格を合成しよう。</p>
+
+  <div id="handArea" class="hand-area"></div>
+
+  <button id="submitCardsBtn">この3枚で合成する</button>
+
+  <div id="myResultArea" class="result-box hidden">
+    <h3 id="myResultTitle"></h3>
+    <p id="myResultText"></p>
+  </div>
+
+  <p id="selectingMessage" class="message"></p>
+</section>
+
   <script type="module" src="./app.js"></script>
 </body>
 </html>
