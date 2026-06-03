@@ -225,3 +225,36 @@ button.mini {
   white-space: pre-line;
   line-height: 1.7;
 }
+
+.anonymous-results {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.anonymous-card {
+  background: #15111f;
+  border: 1px solid #3a314d;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.anonymous-card .label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #8f5cff;
+  color: #fff;
+  font-weight: 700;
+}
+
+.anonymous-card h3 {
+  margin: 4px 0 8px;
+}
+
+.anonymous-card p {
+  white-space: pre-line;
+  line-height: 1.7;
+  color: #d8cdec;
+}
