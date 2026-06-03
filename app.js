@@ -534,12 +534,29 @@ async function checkAllSubmitted() {
   if (!state.isHost) return;
   if (state.currentPhase !== "selecting") return;
   if (state.playerCount <= 0) return;
-  if (state.submissions.length < state.playerCount) return;
+  if (!state.currentTopicId) return;
+
+  const currentSubmissions = getCurrentTopicSubmissions();
+
+  if (currentSubmissions.length < state.playerCount) return;
+
+  const nextIndex = state.topicIndex + 1;
+  const nextTopic = state.roomTopics[nextIndex];
 
   try {
-    await updateDoc(doc(db, "rooms", state.roomId), {
-      phase: "revealing"
-    });
+    if (nextTopic) {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        topicIndex: nextIndex,
+        currentTopicId: nextTopic.id,
+        topic: nextTopic.text
+      });
+    } else {
+      await updateDoc(doc(db, "rooms", state.roomId), {
+        phase: "voting",
+        voteIndex: 0,
+        topicIndex: 0
+      });
+    }
   } catch (error) {
     console.error(error);
   }
