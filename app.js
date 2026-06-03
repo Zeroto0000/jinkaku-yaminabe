@@ -258,6 +258,17 @@ state.currentTopicId = room.currentTopicId || "";
   if (room.phase === "revealing") {
     startRevealing(room.topic);
   }
+
+    if (room.phase === "voting") {
+  showRevealing();
+  revealingTopicText.textContent = "回答完了";
+  anonymousResults.innerHTML = "";
+  voteArea.innerHTML = "";
+  revealingMessage.textContent = "全お題の回答が終わった。次は投票パートを作る。";
+}
+
+
+    
     if (room.phase === "result") {
   startResult(room.topic);
 }
