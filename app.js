@@ -606,9 +606,8 @@ if (currentTopic && currentTopic.event) {
   <span class="name">${card.name}</span>
   <span class="alias">${card.alias || ""}</span>
   <span class="text">${card.text}</span>
-  <span class="tags">${(card.tags || []).join(" / ")}</span>
 `;
-
+    
     button.addEventListener("click", () => {
       toggleCard(card.id, button);
     });
