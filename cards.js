@@ -114,6 +114,70 @@ export const CARDS = [
   },
 
   {
+    id: "ennea_1",
+    name: "1",
+    type: "エニア",
+    text: "正しくありたい。間違いやだらしなさが気になりやすい。",
+    resultText: "正しくありたい。"
+  },
+  {
+    id: "ennea_2",
+    name: "2",
+    type: "エニア",
+    text: "必要とされたい。人の役に立つことで安心しやすい。",
+    resultText: "必要とされたい。"
+  },
+  {
+    id: "ennea_3",
+    name: "3",
+    type: "エニア",
+    text: "認められたい。成果や見え方を意識しやすい。",
+    resultText: "認められたい。"
+  },
+  {
+    id: "ennea_4",
+    name: "4",
+    type: "エニア",
+    text: "特別でいたい。普通扱いされると少し苦しくなる。",
+    resultText: "特別でいたい。"
+  },
+  {
+    id: "ennea_5",
+    name: "5",
+    type: "エニア",
+    text: "知りたい。距離を取りながら観察して理解しようとする。",
+    resultText: "知りたい。"
+  },
+  {
+    id: "ennea_6",
+    name: "6",
+    type: "エニア",
+    text: "安心したい。疑いながらも信じられるものを探す。",
+    resultText: "安心したい。"
+  },
+  {
+    id: "ennea_7",
+    name: "7",
+    type: "エニア",
+    text: "楽しくいたい。重い空気や退屈から逃げたくなる。",
+    resultText: "楽しくいたい。"
+  },
+  {
+    id: "ennea_8",
+    name: "8",
+    type: "エニア",
+    text: "強くありたい。舐められたり支配されたりするのを嫌う。",
+    resultText: "強くありたい。"
+  },
+  {
+    id: "ennea_9",
+    name: "9",
+    type: "エニア",
+    text: "平和でいたい。揉め事を避けて穏やかに済ませたい。",
+    resultText: "平和でいたい。"
+  },
+  
+  {
     id: "praise_bug",
     name: "褒められるとバグる",
     type: "事故",
