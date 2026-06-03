@@ -144,104 +144,186 @@ export const CARDS = [
   resultText: "自分の気持ちを守る。",
   tags: ["本音", "価値観", "譲れない"]
 },
-  {
+   {
     id: "ennea_1",
     name: "1",
     type: "エニア",
+    alias: "正義の点検者",
     text: "正しくありたい。間違いやだらしなさが気になりやすい。",
-    resultText: "正しくありたい。"
+    resultText: "正しくありたい。",
+    tags: ["正義", "完璧", "指摘"]
   },
   {
     id: "ennea_2",
     name: "2",
     type: "エニア",
+    alias: "愛情押し売り妖精",
     text: "必要とされたい。人の役に立つことで安心しやすい。",
-    resultText: "必要とされたい。"
+    resultText: "必要とされたい。",
+    tags: ["献身", "愛情", "世話焼き"]
   },
   {
     id: "ennea_3",
     name: "3",
     type: "エニア",
+    alias: "承認ダッシュ装置",
     text: "認められたい。成果や見え方を意識しやすい。",
-    resultText: "認められたい。"
+    resultText: "認められたい。",
+    tags: ["承認", "演出", "勝ち筋"]
   },
   {
     id: "ennea_4",
     name: "4",
     type: "エニア",
+    alias: "特別感の亡霊",
     text: "特別でいたい。普通扱いされると少し苦しくなる。",
-    resultText: "特別でいたい。"
+    resultText: "特別でいたい。",
+    tags: ["特別", "情緒", "孤高"]
   },
   {
     id: "ennea_5",
     name: "5",
     type: "エニア",
+    alias: "知識の引きこもり",
     text: "知りたい。距離を取りながら観察して理解しようとする。",
-    resultText: "知りたい。"
+    resultText: "知りたい。",
+    tags: ["知識", "観察", "省エネ"]
   },
   {
     id: "ennea_6",
     name: "6",
     type: "エニア",
+    alias: "不安確認センサー",
     text: "安心したい。疑いながらも信じられるものを探す。",
-    resultText: "安心したい。"
+    resultText: "安心したい。",
+    tags: ["不安", "警戒", "確認"]
   },
   {
     id: "ennea_7",
     name: "7",
     type: "エニア",
+    alias: "快楽逃亡犯",
     text: "楽しくいたい。重い空気や退屈から逃げたくなる。",
-    resultText: "楽しくいたい。"
+    resultText: "楽しくいたい。",
+    tags: ["快楽", "逃走", "刺激"]
   },
   {
     id: "ennea_8",
     name: "8",
     type: "エニア",
+    alias: "支配圧ゴリラ",
     text: "強くありたい。舐められたり支配されたりするのを嫌う。",
-    resultText: "強くありたい。"
+    resultText: "強くありたい。",
+    tags: ["支配", "圧", "強者"]
   },
   {
     id: "ennea_9",
     name: "9",
     type: "エニア",
+    alias: "平和維持スライム",
     text: "平和でいたい。揉め事を避けて穏やかに済ませたい。",
-    resultText: "平和でいたい。"
+    resultText: "平和でいたい。",
+    tags: ["平和", "回避", "ゆるさ"]
   },
-  
+
   {
     id: "praise_bug",
     name: "褒められるとバグる",
     type: "事故",
+    alias: "称賛暴走装置",
     text: "褒められると急に調子に乗る。",
-    resultText: "褒められると急に調子に乗る。"
+    resultText: "褒められると急に調子に乗る。",
+    tags: ["調子乗り", "自爆", "浮かれ"]
   },
   {
     id: "love_iq_down",
     name: "好きな人の前だけIQが下がる",
     type: "事故",
+    alias: "恋愛デバフ",
     text: "普段は普通なのに、好きな人の前では急に挙動がおかしくなる。",
-    resultText: "好きな人の前だけIQが下がる。"
+    resultText: "好きな人の前だけIQが下がる。",
+    tags: ["恋愛", "ポンコツ", "自爆"]
   },
   {
     id: "normal_think",
     name: "自分を常識人だと思っている",
     type: "事故",
+    alias: "常識人ごっこ",
     text: "本人だけは自分をかなりまともだと思っている。",
-    resultText: "自分を常識人だと思っている。"
+    resultText: "自分を常識人だと思っている。",
+    tags: ["無自覚", "ズレ", "地雷"]
   },
   {
     id: "last_word",
     name: "最後に余計な一言を言う",
     type: "事故",
+    alias: "沈黙破壊兵器",
     text: "いい感じに終わりそうな場面で、なぜか余計な一言を足す。",
-    resultText: "最後に余計な一言を言う。"
+    resultText: "最後に余計な一言を言う。",
+    tags: ["余計", "爆弾", "凍結"]
   },
   {
     id: "sleepy",
     name: "寝不足",
     type: "事故",
+    alias: "理性低電力モード",
     text: "寝不足で判断が少し雑になっている。",
-    resultText: "寝不足で判断が雑になる。"
+    resultText: "寝不足で判断が雑になる。",
+    tags: ["雑", "低電力", "判断ミス"]
+  },
+  {
+    id: "over_confident",
+    name: "根拠のない自信",
+    type: "事故",
+    alias: "無根拠カリスマ",
+    text: "なぜか自信だけはある。理由は本人にも分からない。",
+    resultText: "根拠のない自信がある。",
+    tags: ["自信", "勢い", "謎カリスマ"]
+  },
+  {
+    id: "too_honest",
+    name: "正直すぎる",
+    type: "事故",
+    alias: "本音直送便",
+    text: "言わなくていいことまで素直に言ってしまう。",
+    resultText: "正直すぎる。",
+    tags: ["本音", "直球", "無防備"]
+  },
+  {
+    id: "sudden_enlightenment",
+    name: "急に悟る",
+    type: "事故",
+    alias: "唐突な賢者タイム",
+    text: "それまで騒いでいたのに、急に人生を分かった顔になる。",
+    resultText: "急に悟る。",
+    tags: ["悟り", "温度差", "哲学"]
+  },
+  {
+    id: "weak_to_pressure",
+    name: "圧に弱い",
+    type: "事故",
+    alias: "圧負け紙メンタル",
+    text: "強く来られると急に判断力が消える。",
+    resultText: "圧に弱い。",
+    tags: ["紙メンタル", "萎縮", "敗北"]
+  },
+  {
+    id: "acts_cool",
+    name: "かっこつける",
+    type: "事故",
+    alias: "雰囲気だけ強者",
+    text: "余裕があるように見せようとして、逆に怪しくなる。",
+    resultText: "かっこつける。",
+    tags: ["見栄", "強がり", "雰囲気"]
+  },
+  {
+    id: "bad_timing",
+    name: "タイミングが悪い",
+    type: "事故",
+    alias: "間の悪さ職人",
+    text: "悪気はないのに、なぜか一番まずいタイミングで動く。",
+    resultText: "タイミングが悪い。",
+    tags: ["間が悪い", "事故", "不運"]
   }
 ];
 
