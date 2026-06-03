@@ -37,13 +37,26 @@ const playerList = document.getElementById("playerList");
 const hostArea = document.getElementById("hostArea");
 const topicInput = document.getElementById("topicInput");
 
+const selecting = document.getElementById("selecting");
+const selectingTopicText = document.getElementById("selectingTopicText");
+const handArea = document.getElementById("handArea");
+const submitCardsBtn = document.getElementById("submitCardsBtn");
+const selectingMessage = document.getElementById("selectingMessage");
+const myResultArea = document.getElementById("myResultArea");
+const myResultTitle = document.getElementById("myResultTitle");
+const myResultText = document.getElementById("myResultText");
+
 const state = {
   roomId: "",
   playerId: "",
   playerName: "",
   isHost: false,
   unsubscribePlayers: null,
-  unsubscribeRoom: null
+  unsubscribeRoom: null,
+
+  selectedCardIds: [],
+  currentHand: [],
+  currentTopic: ""
 };
 
 function makeRoomId() {
@@ -61,11 +74,19 @@ function makePlayerId() {
 function showLobby() {
   lobby.classList.remove("hidden");
   waiting.classList.add("hidden");
+  selecting.classList.add("hidden");
 }
 
 function showWaiting() {
   lobby.classList.add("hidden");
   waiting.classList.remove("hidden");
+  selecting.classList.add("hidden");
+}
+
+function showSelecting() {
+  lobby.classList.add("hidden");
+  waiting.classList.add("hidden");
+  selecting.classList.remove("hidden");
 }
 
 function setLobbyMessage(text) {
@@ -129,8 +150,9 @@ function watchRoom() {
     const room = docSnap.data();
 
     if (room.phase === "selecting") {
-      setWaitingMessage(`ゲーム開始：${room.topic}`);
-    }
+  state.currentTopic = room.topic;
+  startSelecting(room.topic);
+}
   });
 }
 
