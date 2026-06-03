@@ -128,3 +128,46 @@ export const CARDS = [
     text: "寝不足で判断が少し雑になっている。"
   }
 ];
+
+export function getCardById(id) {
+  return CARDS.find(card => card.id === id);
+}
+
+export function drawHand(count = 5) {
+  const shuffled = [...CARDS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+export function createChimera(selectedCards, topic) {
+  const title = createTitle(selectedCards);
+  const body = selectedCards.map(card => card.text).join("\n");
+
+  const ending = [
+    `今回のテーマ「${topic}」には、かなりそれっぽい危うさがある。`,
+    `本人は普通にしているつもりだが、周囲から見るとだいぶクセが強い。`,
+    `うまくハマれば魅力になるが、ズレると一気に面倒くさい。`,
+    `悪い人ではない。ただ、扱い方を間違えると事故る。`
+  ];
+
+  return {
+    title,
+    text: `${body}\n${ending[Math.floor(Math.random() * ending.length)]}`
+  };
+}
+
+function createTitle(cards) {
+  const names = cards.map(card => card.name);
+
+  const a = names[0] || "謎";
+  const b = names[1] || "人格";
+
+  const titles = [
+    `${a}すぎる${b}`,
+    `${a}の皮をかぶった${b}`,
+    `${b}型${a}人間`,
+    `${a}と${b}の事故物件`,
+    `${a}な${b}モンスター`
+  ];
+
+  return titles[Math.floor(Math.random() * titles.length)];
+}
