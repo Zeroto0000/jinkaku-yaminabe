@@ -1058,8 +1058,8 @@ function renderFinalResult() {
     });
   });
 
-  renderTotalRanking(playerScores);
   renderTopicResults(topicResults);
+  renderTotalRanking(playerScores);
 }
 
 function renderTotalRanking(playerScores) {
