@@ -1,6 +1,7 @@
 // app.js
 
 import {
+  CARDS,
   drawHand,
   getCardById,
   createChimera
@@ -573,7 +574,7 @@ if (state.roomId && state.playerId) {
 
 function startSelecting(topic) {
   state.selectedCardIds = [];
-  state.currentHand = drawHand(5);
+  state.currentHand = drawHandForEvent(5);
 
   selectingTopicText.textContent = topic;
   handArea.innerHTML = "";
@@ -1338,4 +1339,43 @@ function validateEventRule(selectedCards) {
   }
 
   return { ok: true, message: "" };
+}
+
+function drawHandForEvent(count = 5) {
+  const currentTopic = state.roomTopics[state.topicIndex];
+  const event = currentTopic?.event;
+
+  if (!event || event.rule === "free") {
+    return drawHand(count);
+  }
+
+  // 禁止ルールなら、そのカテゴリを除外して配る
+  if (event.rule === "ban") {
+    const allowedCards = CARDS.filter(card => card.type !== event.category);
+    return shuffleArray(allowedCards).slice(0, count);
+  }
+
+  // 必須枚数
+  let requiredCount = 0;
+
+  if (event.rule === "must") {
+    requiredCount = 1;
+  }
+
+  if (event.rule === "two") {
+    requiredCount = 2;
+  }
+
+  const requiredCards = CARDS.filter(card => card.type === event.category);
+  const otherCards = CARDS.filter(card => card.type !== event.category);
+
+  // 念のため、対象カードが足りない場合は通常手札にする
+  if (requiredCards.length < requiredCount) {
+    return drawHand(count);
+  }
+
+  const pickedRequired = shuffleArray(requiredCards).slice(0, requiredCount);
+  const pickedOthers = shuffleArray(otherCards).slice(0, count - requiredCount);
+
+  return shuffleArray([...pickedRequired, ...pickedOthers]);
 }
