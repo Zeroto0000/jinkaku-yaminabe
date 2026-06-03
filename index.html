@@ -98,9 +98,25 @@
 
   <div id="anonymousResults" class="anonymous-results"></div>
 
-  <p id="revealingMessage" class="message"></p>
+<h3>一番おもしろい人格に投票</h3>
+<div id="voteArea" class="vote-area"></div>
+
+<p id="revealingMessage" class="message"></p>
 </section>
 
+<!-- 結果発表画面 -->
+<section id="result" class="card hidden">
+  <h2>結果発表</h2>
+
+  <p class="topic">
+    今回のテーマ：<strong id="resultTopicText"></strong>
+  </p>
+
+  <div id="resultArea" class="anonymous-results"></div>
+
+  <p id="resultMessage" class="message"></p>
+</section>
+  
   <script type="module" src="./app.js"></script>
 </body>
 </html>
