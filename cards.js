@@ -275,18 +275,28 @@ export function createChimera(selectedCards, topic) {
 }
 
 function createTitle(cards) {
-  const names = cards.map(card => card.name);
+  const allTags = cards.flatMap(card => card.tags || []);
+  const aliases = cards.map(card => card.alias || card.name);
 
-  const a = names[0] || "謎";
-  const b = names[1] || "人格";
+  const tagA = pickRandom(allTags) || "謎";
+  const tagB = pickRandom(allTags.filter(tag => tag !== tagA)) || "人格";
+  const alias = pickRandom(aliases) || "モンスター";
 
-  const titles = [
-    `${a}すぎる${b}`,
-    `${a}の皮をかぶった${b}`,
-    `${b}型${a}人間`,
-    `${a}と${b}の事故物件`,
-    `${a}な${b}モンスター`
+  const patterns = [
+    `${tagA}${tagB}${alias}`,
+    `${tagA}すぎる${alias}`,
+    `${tagB}型${alias}`,
+    `${tagA}と${tagB}の事故物件`,
+    `${tagA}${tagB}モンスター`,
+    `${tagA}を抱えた${alias}`,
+    `${tagB}製造機`,
+    `${tagA}の皮をかぶった${tagB}`
   ];
 
-  return titles[Math.floor(Math.random() * titles.length)];
+  return pickRandom(patterns);
+}
+
+function pickRandom(array) {
+  if (!array || array.length === 0) return null;
+  return array[Math.floor(Math.random() * array.length)];
 }
