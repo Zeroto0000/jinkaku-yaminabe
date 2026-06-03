@@ -12,6 +12,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  getDocs,
   updateDoc,
   collection,
   onSnapshot,
@@ -68,6 +69,13 @@ const revealingTopicText = document.getElementById("revealingTopicText");
 const anonymousResults = document.getElementById("anonymousResults");
 const revealingMessage = document.getElementById("revealingMessage");
 
+const voteArea = document.getElementById("voteArea");
+
+const result = document.getElementById("result");
+const resultTopicText = document.getElementById("resultTopicText");
+const resultArea = document.getElementById("resultArea");
+const resultMessage = document.getElementById("resultMessage");
+
 const state = {
   roomId: "",
   playerId: "",
@@ -76,6 +84,7 @@ const state = {
   unsubscribePlayers: null,
   unsubscribeRoom: null,
   unsubscribeSubmissions: null,
+  unsubscribeVotes: null,
 
   selectedCardIds: [],
   currentHand: [],
@@ -83,7 +92,8 @@ const state = {
   currentPhase: "waiting",
 
   playerCount: 0,
-  submissions: []
+  submissions: [],
+  votes: []
 };
 
 function makeRoomId() {
@@ -103,6 +113,7 @@ function showLobby() {
   waiting.classList.add("hidden");
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
+  result.classList.add("hidden");
 }
 
 function showWaiting() {
@@ -110,6 +121,7 @@ function showWaiting() {
   waiting.classList.remove("hidden");
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
+  result.classList.add("hidden");
 }
 
 function showSelecting() {
@@ -117,6 +129,7 @@ function showSelecting() {
   waiting.classList.add("hidden");
   selecting.classList.remove("hidden");
   revealing.classList.add("hidden");
+  result.classList.add("hidden");
 }
 
 function showRevealing() {
@@ -124,8 +137,16 @@ function showRevealing() {
   waiting.classList.add("hidden");
   selecting.classList.add("hidden");
   revealing.classList.remove("hidden");
+  result.classList.add("hidden");
 }
 
+function showResult() {
+  lobby.classList.add("hidden");
+  waiting.classList.add("hidden");
+  selecting.classList.add("hidden");
+  revealing.classList.add("hidden");
+  result.classList.remove("hidden");
+}
 function setLobbyMessage(text) {
   lobbyMessage.textContent = text;
 }
@@ -204,6 +225,9 @@ function watchRoom() {
   if (room.phase === "revealing") {
     startRevealing(room.topic);
   }
+    if (room.phase === "result") {
+  startResult(room.topic);
+}
 });
 }
 
@@ -215,8 +239,8 @@ function enterRoom() {
   watchPlayers();
   watchRoom();
   watchSubmissions();
+  watchVotes();
 }
-
 createRoomBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
 
@@ -475,6 +499,7 @@ function startRevealing(topic) {
 
 function renderAnonymousResults() {
   anonymousResults.innerHTML = "";
+  voteArea.innerHTML = "";
 
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -495,5 +520,140 @@ function renderAnonymousResults() {
     `;
 
     anonymousResults.appendChild(div);
+
+    const voteButton = document.createElement("button");
+    voteButton.className = "vote-button";
+    voteButton.textContent = `${label} に投票`;
+    voteButton.addEventListener("click", () => {
+      submitVote(label, submission.playerId);
+    });
+
+    voteArea.appendChild(voteButton);
+  });
+
+  const myVote = state.votes.find(vote => vote.playerId === state.playerId);
+  if (myVote) {
+    revealingMessage.textContent = `投票済み：${myVote.label}`;
+    [...voteArea.children].forEach(button => {
+      button.disabled = true;
+      if (button.textContent.startsWith(myVote.label)) {
+        button.classList.add("voted");
+      }
+    });
+  }
+}
+
+function watchVotes() {
+  if (state.unsubscribeVotes) {
+    state.unsubscribeVotes();
+  }
+
+  const votesRef = collection(db, "rooms", state.roomId, "votes");
+
+  state.unsubscribeVotes = onSnapshot(votesRef, (snapshot) => {
+    state.votes = [];
+
+    snapshot.forEach((docSnap) => {
+      state.votes.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    if (state.currentPhase === "revealing") {
+      revealingMessage.textContent =
+        `投票済み：${state.votes.length}/${state.playerCount}`;
+    }
+
+    checkAllVoted();
+
+    if (state.currentPhase === "result") {
+      renderResult();
+    }
+  });
+}
+
+async function checkAllVoted() {
+  if (!state.isHost) return;
+  if (state.currentPhase !== "revealing") return;
+  if (state.playerCount <= 0) return;
+  if (state.votes.length < state.playerCount) return;
+
+  try {
+    await updateDoc(doc(db, "rooms", state.roomId), {
+      phase: "result"
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function submitVote(label, targetPlayerId) {
+  try {
+    await setDoc(doc(db, "rooms", state.roomId, "votes", state.playerId), {
+      playerId: state.playerId,
+      playerName: state.playerName,
+      label,
+      targetPlayerId,
+      createdAt: serverTimestamp()
+    });
+
+    revealingMessage.textContent = `投票した：${label}`;
+  } catch (error) {
+    console.error(error);
+    revealingMessage.textContent = "投票に失敗した";
+  }
+}
+
+function startResult(topic) {
+  resultTopicText.textContent = topic;
+  resultMessage.textContent = "作者公開。";
+  renderResult();
+  showResult();
+}
+
+function renderResult() {
+  resultArea.innerHTML = "";
+
+  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const sortedSubmissions = [...state.submissions].sort((a, b) => {
+    return a.playerId.localeCompare(b.playerId);
+  });
+
+  const voteCounts = {};
+
+  sortedSubmissions.forEach((submission, index) => {
+    const label = labels[index];
+
+    voteCounts[submission.playerId] = {
+      label,
+      count: 0,
+      submission
+    };
+  });
+
+  state.votes.forEach((vote) => {
+    if (voteCounts[vote.targetPlayerId]) {
+      voteCounts[vote.targetPlayerId].count++;
+    }
+  });
+
+  const ranking = Object.values(voteCounts).sort((a, b) => {
+    return b.count - a.count;
+  });
+
+  ranking.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = index === 0 ? "result-rank winner" : "result-rank";
+
+    div.innerHTML = `
+      <span class="rank">${index + 1}位 / ${item.count}票</span>
+      <h3>${item.label}：【${item.submission.title}】</h3>
+      <p>${item.submission.text}</p>
+      <p><strong>作者：${item.submission.playerName}</strong></p>
+    `;
+
+    resultArea.appendChild(div);
   });
 }
