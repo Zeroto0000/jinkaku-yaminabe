@@ -58,7 +58,6 @@ const waitingMessage = document.getElementById("waitingMessage");
 const roomIdText = document.getElementById("roomIdText");
 const playerList = document.getElementById("playerList");
 const hostArea = document.getElementById("hostArea");
-const topicInput = document.getElementById("topicInput");
 
 const selecting = document.getElementById("selecting");
 const selectingTopicText = document.getElementById("selectingTopicText");
@@ -378,14 +377,12 @@ copyRoomIdBtn.addEventListener("click", async () => {
 });
 
 startGameBtn.addEventListener("click", async () => {
-  const topic = topicInput.value.trim() || getRandomTopic();
-
   try {
     await updateDoc(doc(db, "rooms", state.roomId), {
-  phase: "topicSubmit",
-  topic: "",
-  startedAt: serverTimestamp()
-});
+      phase: "topicSubmit",
+      topic: "",
+      startedAt: serverTimestamp()
+    });
 
     setWaitingMessage("ゲームを開始した");
   } catch (error) {
