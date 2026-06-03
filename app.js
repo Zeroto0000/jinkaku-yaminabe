@@ -522,13 +522,22 @@ function renderAnonymousResults() {
     anonymousResults.appendChild(div);
 
     const voteButton = document.createElement("button");
-    voteButton.className = "vote-button";
-    voteButton.textContent = `${label} に投票`;
-    voteButton.addEventListener("click", () => {
-      submitVote(label, submission.playerId);
-    });
+voteButton.className = "vote-button";
+voteButton.textContent = `${label} に投票`;
 
-    voteArea.appendChild(voteButton);
+const isMine = submission.playerId === state.playerId;
+const canVoteSelf = state.playerCount <= 2;
+
+if (isMine && !canVoteSelf) {
+  voteButton.textContent = `${label} は自分の作品`;
+  voteButton.disabled = true;
+} else {
+  voteButton.addEventListener("click", () => {
+    submitVote(label, submission.playerId);
+  });
+}
+
+voteArea.appendChild(voteButton);
   });
 
   const myVote = state.votes.find(vote => vote.playerId === state.playerId);
