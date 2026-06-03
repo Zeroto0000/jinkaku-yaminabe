@@ -22,19 +22,167 @@ import {
 
 const DEFAULT_TOPICS = [
   "恋愛失敗しそうな人",
+  "好きな人の前でバグりそうな人",
+  "付き合ったら振り回してきそうな人",
+  "モテるけど幸せになれなさそうな人",
+  "告白のタイミングを間違えそうな人",
+  "元恋人を引きずりそうな人",
+  "浮気はしないけど誤解されそうな人",
+
   "SNSで炎上しそうな人",
+  "コメント欄でレスバしそうな人",
+  "匿名掲示板で強そうな人",
+  "ネットでは別人格っぽい人",
+  "いいね数を気にしすぎそうな人",
+  "自分語りが止まらなそうな人",
+  "既読無視で病みそうな人",
+
   "上司にしたくない人",
+  "職場にいたら面倒くさい人",
+  "仕事はできるけど怖そうな人",
+  "会議を長引かせそうな人",
+  "後輩にしたら手がかかりそうな人",
+  "グループ作業で揉めそうな人",
+  "文化祭で暴走しそうな人",
+
   "友達にしたら楽しそうな人",
   "なんだかんだモテそうな人",
-  "実は一番闇が深そうな人",
   "相談したら余計ややこしくしそうな人",
-  "グループ作業で揉めそうな人",
+  "秘密を守れなさそうな人",
+  "初対面だけ強そうな人",
+  "仲良くなると急に面倒くさそうな人",
+  "空気を読んでるようで読んでなさそうな人",
+
+  "実は一番闇が深そうな人",
   "ラスボスになりそうな人",
-  "好きな人の前でバグりそうな人"
+  "黒幕なのに善人ぶりそうな人",
+  "仲間になったら頼もしいけど怖い人",
+  "裏切りそうで裏切らなそうな人",
+  "何もしてないのに疑われそうな人",
+  "急に悟りを開きそうな人",
+
+  "主人公になりそうな人",
+  "序盤で退場しそうな人",
+  "最終回で急に評価されそうな人",
+  "敵に回すと面倒くさそうな人",
+  "味方でも扱いに困りそうな人",
+  "ギャグ枠なのにたまに核心を突きそうな人",
+  "一番現実にいそうで嫌な人"
 ];
+const EVENTS = [
+  // 自由
+  {
+    id: "free",
+    name: "完全闇鍋",
+    text: "縛りなし。好きに混ぜろ",
+    category: "free",
+    rule: "free"
+  },
+
+  // MBTI
+  {
+    id: "must_mbti",
+    name: "タイプの器",
+    text: "MBTIカードを1枚以上入れろ",
+    category: "MBTI",
+    rule: "must"
+  },
+  {
+    id: "no_mbti",
+    name: "タイプ封印",
+    text: "MBTIカードは使用禁止",
+    category: "MBTI",
+    rule: "ban"
+  },
+  {
+    id: "two_mbti",
+    name: "四文字の圧",
+    text: "MBTIカードを2枚以上入れろ",
+    category: "MBTI",
+    rule: "two"
+  },
+
+  // 心理機能
+  {
+    id: "must_function",
+    name: "機能縛り",
+    text: "心理機能カードを1枚以上入れろ",
+    category: "心理機能",
+    rule: "must"
+  },
+  {
+    id: "no_function",
+    name: "機能停止",
+    text: "心理機能カードは使用禁止",
+    category: "心理機能",
+    rule: "ban"
+  },
+  {
+    id: "two_function",
+    name: "機能暴走",
+    text: "心理機能カードを2枚以上入れろ",
+    category: "心理機能",
+    rule: "two"
+  },
+
+  // エニア
+  {
+    id: "must_ennea",
+    name: "欲望の鍋",
+    text: "エニアカードを1枚以上入れろ",
+    category: "エニア",
+    rule: "must"
+  },
+  {
+    id: "no_ennea",
+    name: "欲望封印",
+    text: "エニアカードは使用禁止",
+    category: "エニア",
+    rule: "ban"
+  },
+  {
+    id: "two_ennea",
+    name: "欲望過多",
+    text: "エニアカードを2枚以上入れろ",
+    category: "エニア",
+    rule: "two"
+  },
+
+  // 事故
+  {
+    id: "must_accident",
+    name: "事故物件",
+    text: "事故カードを1枚以上入れろ",
+    category: "事故",
+    rule: "must"
+  },
+  {
+    id: "no_accident",
+    name: "健全鍋",
+    text: "事故カードは使用禁止",
+    category: "事故",
+    rule: "ban"
+  },
+  {
+    id: "two_accident",
+    name: "事故祭り",
+    text: "事故カードを2枚以上入れろ",
+    category: "事故",
+    rule: "two"
+  }
+];
+
+function getRandomEvent() {
+  return EVENTS[Math.floor(Math.random() * EVENTS.length)];
+}
 
 function getRandomTopic() {
   return DEFAULT_TOPICS[Math.floor(Math.random() * DEFAULT_TOPICS.length)];
+}
+
+function setRandomTopicPlaceholder() {
+  const topic = getRandomTopic();
+  myTopicInput.placeholder = `例：${topic}`;
 }
 
 function shuffleArray(array) {
@@ -177,6 +325,8 @@ function showTopicSubmit() {
   selecting.classList.add("hidden");
   revealing.classList.add("hidden");
   result.classList.add("hidden");
+
+  setRandomTopicPlaceholder();
 }
 
 function setLobbyMessage(text) {
