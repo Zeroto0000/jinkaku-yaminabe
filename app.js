@@ -18,6 +18,23 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+const DEFAULT_TOPICS = [
+  "恋愛失敗しそうな人",
+  "職場にいたら面倒くさい人",
+  "SNSで炎上しそうな人",
+  "友達にしたら楽しそうな人",
+  "上司にしたくない人",
+  "なんだかんだモテそうな人",
+  "実は一番闇が深そうな人",
+  "相談したら余計ややこしくしそうな人",
+  "グループ作業で揉めそうな人",
+  "ラスボスになりそうな人"
+];
+
+function getRandomTopic() {
+  return DEFAULT_TOPICS[Math.floor(Math.random() * DEFAULT_TOPICS.length)];
+}
+
 const lobby = document.getElementById("lobby");
 const waiting = document.getElementById("waiting");
 
@@ -268,8 +285,7 @@ copyRoomIdBtn.addEventListener("click", async () => {
 });
 
 startGameBtn.addEventListener("click", async () => {
-  const defaultTopic = "恋愛失敗しそうな人";
-  const topic = topicInput.value.trim() || defaultTopic;
+  const topic = topicInput.value.trim() || getRandomTopic();
 
   try {
     await updateDoc(doc(db, "rooms", state.roomId), {
