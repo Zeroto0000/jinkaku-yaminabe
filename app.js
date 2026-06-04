@@ -1291,7 +1291,8 @@ function renderTopicResults(topicResults) {
         <div style="margin-top: 12px;">
           <strong>${index + 1}位 / ${item.count}票：${item.answer.playerName}</strong>
           <div>【${item.answer.title}】</div>
-          <p>${item.answer.text}</p>
+<div class="parts-label">構成：${item.answer.partsLabel || ""}</div>
+<p>${item.answer.text}</p>
         </div>
       `;
     }).join("");
