@@ -493,3 +493,14 @@ button.mini {
     line-height: 1.5;
   }
 }
+
+.parts-label {
+  display: inline-block;
+  margin: 8px 0 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(168, 132, 255, 0.14);
+  color: #d8cdec;
+  font-size: 13px;
+  font-weight: 700;
+}
