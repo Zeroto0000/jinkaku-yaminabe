@@ -668,6 +668,7 @@ await setDoc(doc(db, "rooms", state.roomId, "submissions", submissionId), {
   playerName: state.playerName,
   cardIds: state.selectedCardIds,
   title: result.title,
+  partsLabel: result.partsLabel,
   text: result.text,
   createdAt: serverTimestamp()
 });
