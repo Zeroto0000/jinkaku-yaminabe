@@ -338,6 +338,7 @@ export function drawHand(count = 5) {
 
 export function createChimera(selectedCards, topic) {
   const title = createTitle(selectedCards);
+  const partsLabel = createPartsLabel(selectedCards);
 
   const body = selectedCards
     .map(card => card.resultText || card.text)
@@ -352,10 +353,90 @@ export function createChimera(selectedCards, topic) {
 
   return {
     title,
+    partsLabel,
     text: `${body}\n${ending[Math.floor(Math.random() * ending.length)]}`
   };
 }
 
+function createMbtiLabel(cards) {
+  const axes = {
+    EI: [],
+    SN: [],
+    TF: [],
+    JP: []
+  };
+
+  cards.forEach((card) => {
+    if (card.type !== "MBTI") return;
+
+    if (card.name === "E" || card.name === "I") {
+      axes.EI.push(card.name);
+    }
+
+    if (card.name === "S" || card.name === "N") {
+      axes.SN.push(card.name);
+    }
+
+    if (card.name === "T" || card.name === "F") {
+      axes.TF.push(card.name);
+    }
+
+    if (card.name === "J" || card.name === "P") {
+      axes.JP.push(card.name);
+    }
+  });
+
+  const hasMbti = Object.values(axes).some(axis => axis.length > 0);
+
+  if (!hasMbti) {
+    return "";
+  }
+
+  const code =
+    pickAxisOrX(axes.EI, ["E", "I"]) +
+    pickAxisOrX(axes.SN, ["S", "N"]) +
+    pickAxisOrX(axes.TF, ["T", "F"]) +
+    pickAxisOrX(axes.JP, ["J", "P"]);
+
+  return `${code}風`;
+}
+
+function pickAxisOrX(selectedLetters, choices) {
+  if (!selectedLetters || selectedLetters.length === 0) {
+    return pickRandom(choices);
+  }
+
+  const uniqueLetters = [...new Set(selectedLetters)];
+
+  if (uniqueLetters.length >= 2) {
+    return "X";
+  }
+
+  return uniqueLetters[0];
+}
+
+function createPartsLabel(cards) {
+  const mbtiLabel = createMbtiLabel(cards);
+
+  const otherParts = cards
+    .filter(card => card.type !== "MBTI")
+    .map(card => card.alias || card.name);
+
+  const parts = [];
+
+  if (mbtiLabel) {
+    parts.push(mbtiLabel);
+  }
+
+  parts.push(...otherParts);
+
+  return parts.join(" / ");
+}
+
+function pickRandom(array) {
+  if (!array || array.length === 0) return null;
+  return array[Math.floor(Math.random() * array.length)];
+}
 function createTitle(cards) {
   const allTags = cards.flatMap(card => card.tags || []);
   const aliases = cards.map(card => card.alias || card.name);
@@ -376,9 +457,4 @@ function createTitle(cards) {
   ];
 
   return pickRandom(patterns);
-}
-
-function pickRandom(array) {
-  if (!array || array.length === 0) return null;
-  return array[Math.floor(Math.random() * array.length)];
 }
