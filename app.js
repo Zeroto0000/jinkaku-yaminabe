@@ -1094,7 +1094,8 @@ function startVoting() {
       div.innerHTML = `
         <span class="label">${label}</span>
         <h3>【${answer.title}】</h3>
-        <p>${answer.text}</p>
+<div class="parts-label">構成：${answer.partsLabel || ""}</div>
+<p>${answer.text}</p>
       `;
 
       anonymousResults.appendChild(div);
