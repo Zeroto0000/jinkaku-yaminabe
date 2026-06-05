@@ -576,7 +576,7 @@ if (state.roomId && state.playerId) {
 
 function startSelecting(topic) {
   state.selectedCardIds = [];
-  state.currentHand = drawHandForEvent(5);
+  state.currentHand = drawHandWithWildForEvent(5);
 
   selectingTopicText.textContent = topic;
   handArea.innerHTML = "";
