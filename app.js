@@ -2,6 +2,8 @@
 
 import {
   CARDS,
+  WILD_CARD,
+  WILD_TAGS,
   drawHand,
   getCardById,
   createChimera
