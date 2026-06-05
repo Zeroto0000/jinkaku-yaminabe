@@ -458,3 +458,29 @@ function createTitle(cards) {
 
   return pickRandom(patterns);
 }
+
+export const WILD_CARD = {
+  id: "wild_card",
+  name: "？？？",
+  type: "特殊",
+  alias: "ワイルドカード",
+  text: "好きな性格パーツを自由に書ける。",
+  resultText: "",
+  tags: ["自由"],
+  isWild: true
+};
+
+export const WILD_TAGS = [
+  "奇行",
+  "恋愛",
+  "闇",
+  "ポンコツ",
+  "支配",
+  "自爆",
+  "カリスマ",
+  "逃走",
+  "情緒",
+  "圧",
+  "無自覚",
+  "哲学"
+];
