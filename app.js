@@ -585,6 +585,17 @@ function startSelecting(topic) {
   selectingTopicText.textContent = topic;
   handArea.innerHTML = "";
 
+    wildInputArea.classList.add("hidden");
+  wildTextInput.value = "";
+  wildTagSelect.innerHTML = "";
+
+  WILD_TAGS.forEach((tag) => {
+    const option = document.createElement("option");
+    option.value = tag;
+    option.textContent = tag;
+    wildTagSelect.appendChild(option);
+  });
+
 const currentTopic = state.roomTopics[state.topicIndex];
 
 if (currentTopic && currentTopic.event) {
