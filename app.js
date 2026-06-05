@@ -242,6 +242,10 @@ const eventBox = document.getElementById("eventBox");
 const eventName = document.getElementById("eventName");
 const eventText = document.getElementById("eventText");
 
+const wildInputArea = document.getElementById("wildInputArea");
+const wildTextInput = document.getElementById("wildTextInput");
+const wildTagSelect = document.getElementById("wildTagSelect");
+
 const state = {
   roomId: "",
   playerId: "",
