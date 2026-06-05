@@ -1386,3 +1386,22 @@ function drawHandForEvent(count = 5) {
 
   return shuffleArray([...pickedRequired, ...pickedOthers]);
 }
+
+function drawHandWithWild(count = 5) {
+  let hand = drawHand(count);
+
+  const shouldAddWild = Math.random() < 0.2;
+
+  if (!shouldAddWild) {
+    return hand;
+  }
+
+  const replaceIndex = Math.floor(Math.random() * hand.length);
+
+  hand[replaceIndex] = {
+    ...WILD_CARD,
+    id: `wild_card_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+  };
+
+  return hand;
+}
